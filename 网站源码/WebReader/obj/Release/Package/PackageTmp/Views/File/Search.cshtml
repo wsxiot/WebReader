@@ -1,0 +1,16 @@
+﻿
+@{
+    Layout = null;
+}
+
+@{
+    List<WebReader.Models.MyFile> files = (List<WebReader.Models.MyFile>)ViewData["Files"];
+    foreach (WebReader.Models.MyFile a in files)
+    {
+        <ul class="list-group">
+            <li class="list-group-item">标题：@a.getTitle() &nbsp;&nbsp;&nbsp;&nbsp;<a href="DownFile?filename=@a.getPath()">下载</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="Read?filename=@a.getPath()">在线查看</a></li>
+            <li class="list-group-item">作者：@a.getAuthor() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 下载量：@a.getVisits() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上传时间：@a.getUploadtime()</li>
+            <li class="list-group-item">简介：@a.getDescription()</li>
+        </ul>
+    }
+}

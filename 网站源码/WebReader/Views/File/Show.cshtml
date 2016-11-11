@@ -1,0 +1,99 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Show</title>
+    <script src="@Url.Content("~/Scripts/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/flexpaper.js")"></script>
+    <script src="@Url.Content("~/Scripts/flexpaper_handlers.js")"></script>
+</head>
+<body>
+    <button id="prev" onclick="prev()">上一页</button>
+    <button id="next" onclick="next()">下一页</button>
+    <object id="testtt" hidden="hidden" classid="CLSID:DB87C40E-0424-41D8-AD9C-03084A60E3B7"></object>
+    <input size="80" id="input-data" />
+    <input size="10" id="yy" />
+    <input size="10" id="condi" />
+    <input size="10" id="sub" />
+    <div id="documentViewer" style="width: 100%; height: 100%; position: fixed;"></div>
+    <script type="text/javascript">
+        if ('@ViewData["path"]' == "文件不存在")
+            $('#documentViewer').html("文件不存在");
+        else {
+            $('#documentViewer').FlexPaperViewer(
+          {
+              config: {
+                  SwfFile: escape('@ViewData["path"]'),
+                  Scale: 0.6,
+                  ZoomTransition: 'easeOut',
+                  ZoomTime: 0.5,
+                  ZoomInterval: 0.2,
+                  FitPageOnLoad: true,
+                  FitWidthOnLoad: true,
+                  FullScreenAsMaxWindow: false,
+                  ProgressiveLoading: false,
+                  MinZoomSize: 0.2,
+                  MaxZoomSize: 5,
+                  SearchMatchAll: false,
+                  InitViewMode: 'Portrait',
+                  ViewModeToolsVisible: false,
+                  ZoomToolsVisible: true,
+                  NavToolsVisible: true,
+                  CursorToolsVisible: false,
+                  SearchToolsVisible: true,
+                  jsDirectory: '/Scripts/',
+                  localeChain: 'en_US'
+              }
+          });
+        }
+    </script>
+    <script type="text/javascript">
+        var num = 0;
+        var flag = false;
+        var prevstate = "Open";
+        function handler() {
+            //document.getElementById("input-data").value = document.getElementById("testtt").GetString(1);
+            var con = document.getElementById("testtt").GetString(1);
+            if (con != "") {
+                var strs = new Array();
+                strs = con.split(",");
+                document.getElementById("yy").value = strs[1];
+                document.getElementById("condi").value = strs[2];
+                if ((prevstate == "Open") && (strs[2] == "Closed")) {
+                    flag = true;
+                    prevstate = strs[2];
+                    num = strs[1];
+                }
+                else if ((prevstate == "Closed") && (strs[2] == "Open")) {
+                    flag = false;
+                    prevstate = strs[2];
+                    return;
+                }
+                document.getElementById("sub").value = strs[1] - num;
+                if ((strs[1] - num) > 0.4 && flag) {
+                    $FlexPaper("documentViewer").nextPage();
+                    num = strs[1];
+
+                }
+                else if ((strs[1] - num) < -0.5 && flag) {
+                    $FlexPaper("documentViewer").prevPage();
+                    num = strs[1];
+                }
+            }
+
+        }
+        var iID = setInterval("handler()", 500);
+    </script>
+    <script>
+        function prev() {
+            $FlexPaper("documentViewer").prevPage();
+        }
+        function next() {
+            $FlexPaper("documentViewer").nextPage();
+        }
+     </script>
+</body>
+</html>

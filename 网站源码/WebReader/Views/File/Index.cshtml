@@ -1,0 +1,140 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta tagname="viewport" content="width=device-width, initial-scale=1">
+    <title>WebReader</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <style>
+        li {
+            overflow: auto;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<!--body-->
+<body>
+    <header tagid="HOME" style="background-position: 50% -125px;">
+        <div class="section_overlay">
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-brand"><a href="/File"><strong> Web Reader</strong></a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/UploadFile">上传</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/User/Register">注册</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/User/Login">登录</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/Mine">我的</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/Index">主页</a></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <br><br><br>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-3 column well well-lg">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            阅读排行
+                        </h4>
+                    </a>
+                    <div id="downloadorder">
+                        @{
+                            List<WebReader.Models.MyFile> downloadorder = (List<WebReader.Models.MyFile>)ViewData["DownloadOrder"];
+                            foreach (WebReader.Models.MyFile a in downloadorder)
+                            {
+                                <a href="/File/Show?filename=@a.getPath()" class="list-group-item">
+                                    <p class="list-group-item-text">
+                                        @a.getTitle()&nbsp;&nbsp;&nbsp;
+                                        <span class="badge">@a.getVisits()</span>
+                                    </p>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            最新分享
+                        </h4>
+                    </a>
+                    <div id="timeorder">
+                        @{
+                            List<WebReader.Models.MyFile> timeorder = (List<WebReader.Models.MyFile>)ViewData["TimerOrder"];
+                            foreach (WebReader.Models.MyFile a in timeorder)
+                            {
+                                <a href="/File/Show?filename=@a.getPath()" class="list-group-item">
+                                    <p class="list-group-item-text">
+                                        @a.getTitle()&nbsp;&nbsp;&nbsp;
+                                        <span class="badge">@a.getUploadtime().Split(' ')[0]</span>
+                                    </p>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9 column">
+                <div class="tabbable" id="tabs-807325">
+                    <ul class="nav nav-tabs">
+                        <li>
+                            <div class="input-group">
+                                <input id="input_search" type="text" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="bt_search">搜索</button>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                    <br />
+                    <div class="tab-content">
+                        <div class="well" id="all">
+                            @{
+                                List<WebReader.Models.MyFile> files = (List<WebReader.Models.MyFile>)ViewData["Files"];
+                                foreach (WebReader.Models.MyFile a in files)
+                                {
+                                    <ul class="list-group">
+                                        <li class="list-group-item">标题：@a.getTitle() &nbsp;&nbsp;&nbsp;&nbsp;<a href="/File/DownFile?filename=@a.getPath()">下载</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/File/Show?filename=@a.getPath()">在线查看</a></li>
+                                        <li class="list-group-item">作者：@a.getAuthor() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 下载量：@a.getVisits() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 上传时间：@a.getUploadtime()</li>
+                                        <li class="list-group-item">简介：@a.getDescription()</li>
+                                    </ul>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+</body>
+</html>
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script>
+    $("#bt_search").click(function () {
+        var keyword = $("#input_search").val();
+        if ("" == keyword)
+            return;
+        $.ajax({
+            type: "POST",
+            url: "/File/Search",
+            data: {
+                keyword: keyword
+            },
+            dataType: "html",
+            success: function (data) {
+                $("#all").html(data);
+            }
+        });
+    });
+</script>

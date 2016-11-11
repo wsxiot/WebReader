@@ -1,0 +1,96 @@
+﻿
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>文件上传</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <header tagid="HOME" style="background-position: 50% -125px;">
+        <div class="section_overlay">
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-brand"><a href="/File"><strong> Web Reader</strong></a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/UploadFile">上传</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/User/Register">注册</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/User/Login">登录</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/Mine">我的</a></div>
+                    <div class="navbar-brand" style="float:right;"><a href="/File/Index">主页</a></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <br><br><br>
+    <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-1 main">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">文件上传</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>标题</label>
+                            <input class="form-control" id="id_title" />
+                        </div>
+                        <div class="form-group">
+                            <label>描述</label>
+                            <textarea class="form-control" rows="3" id="id_description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>标签</label>
+                            <textarea class="form-control" rows="1" id="id_tags"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>权限</label><br/>
+                            <label>私有</label>：<input type="radio" checked="checked" name="access" id="private" />
+                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公开</label>：<input type="radio" name="access" id="public" />
+                        </div>
+                        <div class="form-group">
+                            <label>选择文件</label>
+                            <input class="btn btn-primary" type="file" name="fileToUpload" id="fileToUpload" multiple />
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="submitInfo">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="@Url.Content("~/Scripts/ajaxupload.3.6.js")"></script>
+<script>
+    $("#submitInfo").click(function () {
+        var title = $('#id_title').val();
+        var description = $('#id_description').val();
+        var tags = $('#id_tags').val();
+        var filename = $('#fileToUpload').val();
+        var access = "private";
+        if (document.getElementById("public").checked)
+            access = "public";
+        if ("" == title || "" == description || "" == tags || "" == filename) {
+            alert("信息不完整，请完善信息");
+            return;
+        }
+        if (document.getElementById("fileToUpload").files[0].size > 1073741824) {
+            alert("文件过大，请限制在1G以内");
+        }
+        $.ajaxFileUpload({
+            url: "/File/DealUploadFile",
+            secureuri: false,
+            fileElementId: 'fileToUpload',
+            data: {
+                title: title,
+                description: description,
+                tags: tags,
+                access: access
+            },
+            dataType: "text",
+            success: function (data) {
+                alert(data);
+            }
+        });
+    });
+</script>
